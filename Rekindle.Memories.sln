@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rekindle.Memories.Api", "Rekindle.Memories.Api\Rekindle.Memories.Api.csproj", "{034C2967-9DBD-4580-AE5E-AA04CED688CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rekindle.Memories.Application", "Rekindle.Memories.Application\Rekindle.Memories.Application.csproj", "{AC3D4DD7-A38D-4C32-B43F-2DE11E9D02DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rekindle.Memories.Infrastructure", "Rekindle.Memories.Infrastructure\Rekindle.Memories.Infrastructure.csproj", "{700D351F-6468-48B1-AFB0-666B52E60D6C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rekindle.Memories.Domain", "Rekindle.Memories.Domain\Rekindle.Memories.Domain.csproj", "{7F29C012-125D-4853-B8A2-DE5A94B8CFC5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rekindle.Memories.Contracts", "Rekindle.Memories.Contracts\Rekindle.Memories.Contracts.csproj", "{526DCBDA-5602-43D4-A535-832B6B15557F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{034C2967-9DBD-4580-AE5E-AA04CED688CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{034C2967-9DBD-4580-AE5E-AA04CED688CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{034C2967-9DBD-4580-AE5E-AA04CED688CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{034C2967-9DBD-4580-AE5E-AA04CED688CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC3D4DD7-A38D-4C32-B43F-2DE11E9D02DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC3D4DD7-A38D-4C32-B43F-2DE11E9D02DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC3D4DD7-A38D-4C32-B43F-2DE11E9D02DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC3D4DD7-A38D-4C32-B43F-2DE11E9D02DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{700D351F-6468-48B1-AFB0-666B52E60D6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{700D351F-6468-48B1-AFB0-666B52E60D6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{700D351F-6468-48B1-AFB0-666B52E60D6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{700D351F-6468-48B1-AFB0-666B52E60D6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F29C012-125D-4853-B8A2-DE5A94B8CFC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F29C012-125D-4853-B8A2-DE5A94B8CFC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F29C012-125D-4853-B8A2-DE5A94B8CFC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F29C012-125D-4853-B8A2-DE5A94B8CFC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{526DCBDA-5602-43D4-A535-832B6B15557F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{526DCBDA-5602-43D4-A535-832B6B15557F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{526DCBDA-5602-43D4-A535-832B6B15557F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{526DCBDA-5602-43D4-A535-832B6B15557F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
