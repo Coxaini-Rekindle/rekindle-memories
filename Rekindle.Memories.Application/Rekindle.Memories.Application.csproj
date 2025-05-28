@@ -10,10 +10,13 @@
       <PackageReference Include="MediatR" Version="12.5.0" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.5" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.5" />
+      <PackageReference Include="Rebus" Version="8.8.0" />
+      <PackageReference Include="Rekindle.UserGroups.Contracts" Version="1.0.1" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Rekindle.Memories.Contracts\Rekindle.Memories.Contracts.csproj" />
+      <ProjectReference Include="..\Rekindle.Memories.Domain\Rekindle.Memories.Domain.csproj" />
     </ItemGroup>
 
 </Project>

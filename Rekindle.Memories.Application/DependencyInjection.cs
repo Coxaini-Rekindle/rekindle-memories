@@ -13,3 +13,7 @@ public static class DependencyInjection
         return services;
     }
 }
+
+public interface IApplicationAssemblyMarker
+{
+}

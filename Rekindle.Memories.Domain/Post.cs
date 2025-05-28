@@ -1,7 +1,11 @@
-﻿namespace Rekindle.Memories.Domain;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
+namespace Rekindle.Memories.Domain;
 
 public class Post : IMemoryBlock
 {
+    [BsonId, BsonRepresentation(BsonType.String)]
     public Guid Id { get; set; }
     public Guid MemoryId { get; set; }
     public string Content { get; set; } = string.Empty;

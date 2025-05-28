@@ -44,8 +44,6 @@ builder.Services
 
 var app = builder.Build();
 
-// Start the Rebus message bus
-app.Services.StartRebus();
 
 app.UseSwaggerUI(c =>
 {
@@ -57,9 +55,5 @@ app.UseCors("Default");
 
 app.UseExceptionHandlingMiddleware();
 //app.UseHttpsRedirection();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
 
 app.Run();

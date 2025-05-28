@@ -2,9 +2,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rebus.Config;
 using Rebus.Routing.TypeBased;
-using Rebus.Serialization.Json;
+using Rekindle.Memories.Application;
 using Rekindle.Memories.Application.Common.Messaging;
-using Rekindle.Memories.Contracts;
+using Rekindle.UserGroups.Contracts.GroupEvents;
+using Rekindle.UserGroups.Contracts.UserEvents;
+using IEvent = Rekindle.UserGroups.Contracts.IEvent;
 
 namespace Rekindle.Memories.Infrastructure.Messaging;
 
@@ -24,7 +26,7 @@ public static class RebusConfig
         var rabbitMqConnectionString = configuration.GetConnectionString("RabbitMQ")
                                        ?? "amqp://guest:guest@localhost:5672";
 
-        var serviceName = configuration["ServiceName"] ?? "Rekindle.UserGroups";
+        var serviceName = configuration["ServiceName"];
 
         services.AddRebus(configure => configure
             .Transport(t => t.UseRabbitMq(rabbitMqConnectionString, serviceName))
@@ -33,24 +35,24 @@ public static class RebusConfig
                 r.TypeBased()
                     .MapAssemblyOf<IEvent>(serviceName);
             })
-            .Serialization(s => s.UseNewtonsoftJson())
-            .Logging(l => l.ColoredConsole())
+            .Logging(l => l.ColoredConsole()),
+            onCreated: async bus =>
+            {
+                await bus.Subscribe<GroupCreatedEvent>();
+                await bus.Subscribe<GroupUpdatedEvent>();
+                await bus.Subscribe<GroupDeletedEvent>();
+                await bus.Subscribe<UserJoinedGroupEvent>();
+                await bus.Subscribe<UserLeftGroupEvent>();
+                await bus.Subscribe<UserNameChangedEvent>();
+                await bus.Subscribe<UserAvatarChangedEvent>();
+            }
         );
-
+        services.AutoRegisterHandlersFromAssemblyOf<IApplicationAssemblyMarker>();
         services.AddTransient<IEventPublisher, RebusEventPublisher>();
 
         return services;
     }
 
-    /// <summary>
-    /// Starts the Rebus message bus
-    /// </summary>
-    /// <param name="serviceProvider">The service provider</param>
-    public static void StartRebus(this IServiceProvider serviceProvider)
-    {
-        // Start the bus
-        serviceProvider.GetRequiredService<Rebus.Bus.IBus>();
-    }
 }
 
 public interface IInfrastructureAssemblyMarker
