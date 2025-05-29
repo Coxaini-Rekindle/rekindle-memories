@@ -45,34 +45,9 @@ public class GetMemoryByIdQueryHandler : IRequestHandler<GetMemoryByIdQuery, Mem
         if (!isUserMember)
         {
             throw new UserNotGroupMemberException();
-        }
-
-        // Fetch the main post
+        }        // Fetch the main post
         var mainPost = await _postRepository.FindById(memory.MainPostId, cancellationToken);
 
-        return new MemoryDto
-        {
-            Id = memory.Id,
-            GroupId = memory.GroupId,
-            Title = memory.Title,
-            Description = memory.Description,
-            CreatedAt = memory.CreatedAt,
-            CreatorUserId = memory.CreatorUserId,
-            ParticipantsIds = memory.ParticipantsIds,
-            MainPostId = memory.MainPostId,
-            MainPost = mainPost != null ? new PostDto
-            {
-                Id = mainPost.Id,
-                MemoryId = mainPost.MemoryId,
-                Content = mainPost.Content,
-                Images = mainPost.Images.Select(img => new ImageDto
-                {
-                    FileId = img.FileId,
-                    ParticipantIds = img.ParticipantIds
-                }).ToList(),
-                CreatedAt = mainPost.CreatedAt,
-                CreatorUserId = mainPost.CreatorUserId
-            } : null
-        };
+        return memory.ToDto(mainPost);
     }
 }

@@ -56,9 +56,8 @@ public static class MongoDbConfiguration
             .Ascending(x => x.CreatedAt);
         
         await collection.Indexes.CreateOneAsync(new CreateIndexModel<Comment>(indexKeysDefinition));
-        
-        // Index for reply posts
-        var replyIndexKeys = Builders<Comment>.IndexKeys.Ascending(x => x.ReplyPostId);
+          // Index for reply posts
+        var replyIndexKeys = Builders<Comment>.IndexKeys.Ascending(x => x.ReplyToPostId);
         await collection.Indexes.CreateOneAsync(new CreateIndexModel<Comment>(replyIndexKeys));
     }
 

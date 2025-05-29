@@ -32,3 +32,23 @@ public class UserNotGroupMemberException : AppException
     {
     }
 }
+
+public class PostNotFoundException : AppException
+{
+    public PostNotFoundException() : base(
+        "Post not found",
+        HttpStatusCode.NotFound,
+        nameof(PostNotFoundException))
+    {
+    }
+}
+
+public class CommentNotFoundException : AppException
+{
+    public CommentNotFoundException() : base(
+        "Comment not found",
+        HttpStatusCode.NotFound,
+        nameof(CommentNotFoundException))
+    {
+    }
+}

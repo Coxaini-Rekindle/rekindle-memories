@@ -3,6 +3,8 @@ using System.Text.Json.Serialization;
 using Rekindle.Exceptions.Api;
 using Rekindle.Exceptions.Api.Extensions;
 using Rekindle.Memories.Api.Routes.Memories;
+using Rekindle.Memories.Api.Routes.Posts;
+using Rekindle.Memories.Api.Routes.Comments;
 using Rekindle.Memories.Application;
 using Rekindle.Memories.Infrastructure;
 using Rekindle.Memories.Infrastructure.Messaging;
@@ -58,5 +60,7 @@ app.UseExceptionHandlingMiddleware();
 //app.UseHttpsRedirection();
 
 app.MapMemoryEndpoints();
+app.MapPostEndpoints();
+app.MapCommentEndpoints();
 
 app.Run();

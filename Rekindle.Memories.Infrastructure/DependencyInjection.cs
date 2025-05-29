@@ -37,6 +37,7 @@ public static class DependencyInjection
         services.AddScoped<IGroupRepository, GroupRepository>();
         services.AddScoped<IMemoryRepository, MemoryRepository>();
         services.AddScoped<IPostRepository, PostRepository>();
+        services.AddScoped<ICommentRepository, CommentRepository>();
         services.AddScoped<ITransactionManager, MongoTransactionManager>();
 
         return services;
