@@ -29,13 +29,8 @@ public static class RebusConfig
         var serviceName = configuration["ServiceName"];
 
         services.AddRebus(configure => configure
-            .Transport(t => t.UseRabbitMq(rabbitMqConnectionString, serviceName))
-            .Routing(r =>
-            {
-                r.TypeBased()
-                    .MapAssemblyOf<IEvent>(serviceName);
-            })
-            .Logging(l => l.ColoredConsole()),
+                .Transport(t => t.UseRabbitMq(rabbitMqConnectionString, serviceName))
+                .Logging(l => l.ColoredConsole()),
             onCreated: async bus =>
             {
                 await bus.Subscribe<GroupCreatedEvent>();
@@ -52,7 +47,6 @@ public static class RebusConfig
 
         return services;
     }
-
 }
 
 public interface IInfrastructureAssemblyMarker

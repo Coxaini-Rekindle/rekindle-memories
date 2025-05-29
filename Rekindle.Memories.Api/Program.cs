@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Rekindle.Exceptions.Api;
 using Rekindle.Exceptions.Api.Extensions;
+using Rekindle.Memories.Api.Routes.Memories;
 using Rekindle.Memories.Application;
 using Rekindle.Memories.Infrastructure;
 using Rekindle.Memories.Infrastructure.Messaging;
@@ -55,5 +56,7 @@ app.UseCors("Default");
 
 app.UseExceptionHandlingMiddleware();
 //app.UseHttpsRedirection();
+
+app.MapMemoryEndpoints();
 
 app.Run();

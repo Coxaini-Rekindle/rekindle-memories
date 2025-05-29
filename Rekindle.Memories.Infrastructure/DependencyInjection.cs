@@ -7,11 +7,14 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using Rekindle.Authentication;
+using Rekindle.Memories.Application.Common.Abstractions;
 using Rekindle.Memories.Application.Groups.Abstractions.Repositories;
+using Rekindle.Memories.Application.Memories.Abstractions.Repositories;
 using Rekindle.Memories.Application.Storage.Interfaces;
 using Rekindle.Memories.Infrastructure.DataAccess;
 using Rekindle.Memories.Infrastructure.Messaging;
 using Rekindle.Memories.Infrastructure.Repositories.Groups;
+using Rekindle.Memories.Infrastructure.Repositories.Memories;
 using Rekindle.Memories.Infrastructure.Services;
 using Rekindle.Memories.Infrastructure.Storage;
 
@@ -29,11 +32,12 @@ public static class DependencyInjection
         services.AddFileStorage(configuration);
         
         return services;
-    }
-
-    private static IServiceCollection AddRepositories(this IServiceCollection services)
+    }    private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<IGroupRepository, GroupRepository>();
+        services.AddScoped<IMemoryRepository, MemoryRepository>();
+        services.AddScoped<IPostRepository, PostRepository>();
+        services.AddScoped<ITransactionManager, MongoTransactionManager>();
 
         return services;
     }
@@ -73,7 +77,6 @@ public static class DependencyInjection
         services.AddScoped<IMemoriesDbContext, MemoriesDbContext>();
         
         services.AddHostedService<DatabaseConfigurationService>();
-        
-        return services;
+          return services;
     }
 }

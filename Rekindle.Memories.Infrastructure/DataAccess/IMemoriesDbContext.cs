@@ -9,6 +9,11 @@ namespace Rekindle.Memories.Infrastructure.DataAccess;
 public interface IMemoriesDbContext
 {
     /// <summary>
+    /// Gets the MongoDB client instance for transactions
+    /// </summary>
+    IMongoClient Client { get; }
+    
+    /// <summary>
     /// Gets the MongoDB database instance
     /// </summary>
     IMongoDatabase Database { get; }

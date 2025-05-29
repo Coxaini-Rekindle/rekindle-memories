@@ -9,12 +9,17 @@ namespace Rekindle.Memories.Infrastructure.DataAccess;
 /// </summary>
 public class MemoriesDbContext : IMemoriesDbContext
 {
+    private readonly IMongoClient _mongoClient;
     private readonly IMongoDatabase _database;
 
     public MemoriesDbContext(IMongoClient mongoClient, IOptions<MemoriesDbConfig> config)
     {
+        _mongoClient = mongoClient;
         _database = mongoClient.GetDatabase(config.Value.DatabaseName);
     }
+
+    /// <inheritdoc />
+    public IMongoClient Client => _mongoClient;
 
     /// <inheritdoc />
     public IMongoDatabase Database => _database;
