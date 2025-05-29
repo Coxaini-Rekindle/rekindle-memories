@@ -97,9 +97,7 @@ public class CreateMemoryCommandHandler : IRequestHandler<CreateMemoryCommand, M
 
 
         await _memoryRepository.InsertMemory(memory, cancellationToken);
-        await _postRepository.InsertPost(post, cancellationToken);
-
-        return new MemoryDto
+        await _postRepository.InsertPost(post, cancellationToken);        return new MemoryDto
         {
             Id = memory.Id,
             GroupId = memory.GroupId,
@@ -108,7 +106,20 @@ public class CreateMemoryCommandHandler : IRequestHandler<CreateMemoryCommand, M
             CreatedAt = memory.CreatedAt,
             CreatorUserId = memory.CreatorUserId,
             ParticipantsIds = memory.ParticipantsIds,
-            MainPostId = memory.MainPostId
+            MainPostId = memory.MainPostId,
+            MainPost = new PostDto
+            {
+                Id = post.Id,
+                MemoryId = post.MemoryId,
+                Content = post.Content,
+                Images = post.Images.Select(img => new ImageDto
+                {
+                    FileId = img.FileId,
+                    ParticipantIds = img.ParticipantIds
+                }).ToList(),
+                CreatedAt = post.CreatedAt,
+                CreatorUserId = post.CreatorUserId
+            }
         };
     }
 }

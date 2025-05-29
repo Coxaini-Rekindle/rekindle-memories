@@ -18,13 +18,16 @@ public class GetMemoriesQueryHandler : IRequestHandler<GetMemoriesQuery, CursorP
 {
     private readonly IMemoryRepository _memoryRepository;
     private readonly IGroupRepository _groupRepository;
+    private readonly IPostRepository _postRepository;
 
     public GetMemoriesQueryHandler(
         IMemoryRepository memoryRepository,
-        IGroupRepository groupRepository)
+        IGroupRepository groupRepository,
+        IPostRepository postRepository)
     {
         _memoryRepository = memoryRepository;
         _groupRepository = groupRepository;
+        _postRepository = postRepository;
     }
 
     public async Task<CursorPaginationResponse<MemoryDto>> Handle(GetMemoriesQuery request, CancellationToken cancellationToken)
@@ -56,13 +59,21 @@ public class GetMemoriesQueryHandler : IRequestHandler<GetMemoriesQuery, CursorP
         if (hasMore)
         {
             memoryList = memoryList.Take(request.Limit).ToList();
-        }
-
-        DateTime? nextCursor = null;
+        }        DateTime? nextCursor = null;
         if (hasMore && memoryList.Any())
         {
             nextCursor = memoryList.Last().CreatedAt;
         }
+
+        // Fetch main posts for all memories
+        var mainPostIds = memoryList.Select(m => m.MainPostId).ToList();
+        var mainPostTasks = mainPostIds.Select(postId => _postRepository.FindById(postId, cancellationToken));
+        var mainPosts = await Task.WhenAll(mainPostTasks);
+        
+        // Create a dictionary for quick lookup
+        var mainPostsDict = mainPosts
+            .Where(p => p != null)
+            .ToDictionary(p => p!.Id, p => p!);
 
         var memoryDtos = memoryList.Select(m => new MemoryDto
         {
@@ -73,7 +84,20 @@ public class GetMemoriesQueryHandler : IRequestHandler<GetMemoriesQuery, CursorP
             CreatedAt = m.CreatedAt,
             CreatorUserId = m.CreatorUserId,
             ParticipantsIds = m.ParticipantsIds,
-            MainPostId = m.MainPostId
+            MainPostId = m.MainPostId,
+            MainPost = mainPostsDict.TryGetValue(m.MainPostId, out var mainPost) ? new PostDto
+            {
+                Id = mainPost.Id,
+                MemoryId = mainPost.MemoryId,
+                Content = mainPost.Content,
+                Images = mainPost.Images.Select(img => new ImageDto
+                {
+                    FileId = img.FileId,
+                    ParticipantIds = img.ParticipantIds
+                }).ToList(),
+                CreatedAt = mainPost.CreatedAt,
+                CreatorUserId = mainPost.CreatorUserId
+            } : null
         });
 
         return new CursorPaginationResponse<MemoryDto>

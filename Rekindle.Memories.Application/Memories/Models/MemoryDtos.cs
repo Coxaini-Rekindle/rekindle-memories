@@ -10,6 +10,7 @@ public record MemoryDto
     public Guid CreatorUserId { get; init; }
     public List<Guid> ParticipantsIds { get; init; } = [];
     public Guid MainPostId { get; init; }
+    public PostDto? MainPost { get; init; }
 }
 
 public record PostDto

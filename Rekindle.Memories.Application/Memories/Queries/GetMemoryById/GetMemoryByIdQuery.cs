@@ -16,13 +16,16 @@ public class GetMemoryByIdQueryHandler : IRequestHandler<GetMemoryByIdQuery, Mem
 {
     private readonly IMemoryRepository _memoryRepository;
     private readonly IGroupRepository _groupRepository;
+    private readonly IPostRepository _postRepository;
 
     public GetMemoryByIdQueryHandler(
         IMemoryRepository memoryRepository,
-        IGroupRepository groupRepository)
+        IGroupRepository groupRepository,
+        IPostRepository postRepository)
     {
         _memoryRepository = memoryRepository;
         _groupRepository = groupRepository;
+        _postRepository = postRepository;
     }
 
     public async Task<MemoryDto> Handle(GetMemoryByIdQuery request, CancellationToken cancellationToken)
@@ -38,13 +41,14 @@ public class GetMemoryByIdQueryHandler : IRequestHandler<GetMemoryByIdQuery, Mem
         if (group == null)
         {
             throw new GroupNotFoundException();
-        }
-
-        var isUserMember = group.Members.Any(m => m.Id == request.UserId);
+        }        var isUserMember = group.Members.Any(m => m.Id == request.UserId);
         if (!isUserMember)
         {
             throw new UserNotGroupMemberException();
         }
+
+        // Fetch the main post
+        var mainPost = await _postRepository.FindById(memory.MainPostId, cancellationToken);
 
         return new MemoryDto
         {
@@ -55,7 +59,20 @@ public class GetMemoryByIdQueryHandler : IRequestHandler<GetMemoryByIdQuery, Mem
             CreatedAt = memory.CreatedAt,
             CreatorUserId = memory.CreatorUserId,
             ParticipantsIds = memory.ParticipantsIds,
-            MainPostId = memory.MainPostId
+            MainPostId = memory.MainPostId,
+            MainPost = mainPost != null ? new PostDto
+            {
+                Id = mainPost.Id,
+                MemoryId = mainPost.MemoryId,
+                Content = mainPost.Content,
+                Images = mainPost.Images.Select(img => new ImageDto
+                {
+                    FileId = img.FileId,
+                    ParticipantIds = img.ParticipantIds
+                }).ToList(),
+                CreatedAt = mainPost.CreatedAt,
+                CreatorUserId = mainPost.CreatorUserId
+            } : null
         };
     }
 }
