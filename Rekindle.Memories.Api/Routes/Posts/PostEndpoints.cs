@@ -10,6 +10,7 @@ using Rekindle.Memories.Application.Memories.Commands.AddReaction;
 using Rekindle.Memories.Application.Memories.Commands.RemoveReaction;
 using Rekindle.Memories.Application.Memories.Models;
 using Rekindle.Memories.Application.Memories.Queries.GetPostById;
+using Rekindle.Memories.Application.Memories.Queries.GetPostImage;
 using Rekindle.Memories.Application.Memories.Queries.GetMemoryActivities;
 
 namespace Rekindle.Memories.Api.Routes.Posts;
@@ -50,13 +51,21 @@ public static class PostEndpoints
             .Produces(400)
             .Produces(401)
             .Produces(403)
-            .Produces(404);
-
-        postsEndpoint.MapGet("/{postId:guid}", GetPostById)
+            .Produces(404);        postsEndpoint.MapGet("/{postId:guid}", GetPostById)
             .WithName("GetPostById")
             .WithSummary("Get a specific post")
             .WithDescription("Gets a specific post by its ID")
             .Produces<PostDto>(200)
+            .Produces(400)
+            .Produces(401)
+            .Produces(403)
+            .Produces(404);
+
+        postsEndpoint.MapGet("/{postId:guid}/images/{imageFileId:guid}", GetPostImage)
+            .WithName("GetPostImage")
+            .WithSummary("Get a post image")
+            .WithDescription("Gets a specific image from a post")
+            .Produces<FileResult>(200)
             .Produces(400)
             .Produces(401)
             .Produces(403)
@@ -266,10 +275,26 @@ public static class PostEndpoints
             PostId: postId,
             Content: request.Content,
             UserId: userId
+        );        var result = await mediator.Send(command);
+        return Results.Ok(result);
+    }
+
+    private static async Task<IResult> GetPostImage(
+        [FromRoute] Guid postId,
+        [FromRoute] Guid imageFileId,
+        [FromServices] IMediator mediator,
+        ClaimsPrincipal user)
+    {
+        var userId = GetUserIdFromClaims(user);
+
+        var query = new GetPostImageQuery(
+            PostId: postId,
+            ImageFileId: imageFileId,
+            UserId: userId
         );
 
-        var result = await mediator.Send(command);
-        return Results.Ok(result);
+        var result = await mediator.Send(query);
+        return Results.Stream(result.Stream, result.ContentType);
     }
 
     private static async Task<IResult> DeletePost(
