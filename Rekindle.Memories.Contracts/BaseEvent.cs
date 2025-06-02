@@ -3,13 +3,13 @@
 /// <summary>
 /// Base interface for all events in the system
 /// </summary>
-public interface IEvent
+public interface IMemoryEvent
 {
     /// <summary>
     /// Unique identifier for the event
     /// </summary>
     Guid Id { get; }
-    
+
     /// <summary>
     /// When the event occurred (UTC)
     /// </summary>
@@ -19,13 +19,13 @@ public interface IEvent
 /// <summary>
 /// Base class for all events to ensure consistency
 /// </summary>
-public abstract class Event : IEvent
+public abstract class MemoryEvent : IMemoryEvent
 {
     /// <summary>
     /// Unique identifier for the event
     /// </summary>
     public Guid Id { get; } = Guid.NewGuid();
-    
+
     /// <summary>
     /// When the event occurred (UTC)
     /// </summary>

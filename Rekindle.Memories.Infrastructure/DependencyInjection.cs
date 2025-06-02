@@ -30,9 +30,11 @@ public static class DependencyInjection
         services.AddRepositories();
         services.AddJwtAuth(configuration);
         services.AddFileStorage(configuration);
-        
+
         return services;
-    }    private static IServiceCollection AddRepositories(this IServiceCollection services)
+    }
+
+    private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<IGroupRepository, GroupRepository>();
         services.AddScoped<IMemoryRepository, MemoryRepository>();
@@ -42,7 +44,7 @@ public static class DependencyInjection
 
         return services;
     }
-    
+
     private static IServiceCollection AddFileStorage(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddSingleton<IFileStorage, FileStorage>();
@@ -50,34 +52,34 @@ public static class DependencyInjection
 
         return services;
     }
-    
+
     private static IServiceCollection AddMongoDb(this IServiceCollection services,
         IConfiguration configuration)
     {
         // Configure MongoDB
         var memoriesDbSection = configuration.GetSection(MemoriesDbConfig.MemoriesDb);
         services.Configure<MemoriesDbConfig>(memoriesDbSection);
-        
+
         // Register MongoDB services
         services.AddSingleton<IMongoClient>(serviceProvider =>
         {
             var config = serviceProvider.GetRequiredService<IOptions<MemoriesDbConfig>>().Value;
             return new MongoClient(config.ConnectionString);
         });
-        
+
         services.AddScoped<IMongoDatabase>(serviceProvider =>
         {
             var config = serviceProvider.GetRequiredService<IOptions<MemoriesDbConfig>>().Value;
             var client = serviceProvider.GetRequiredService<IMongoClient>();
             return client.GetDatabase(config.DatabaseName);
         });
-        
+
         BsonSerializer.RegisterSerializer(typeof(Guid), new GuidSerializer(GuidRepresentation.Standard));
-        
+
         // Register database context
         services.AddScoped<IMemoriesDbContext, MemoriesDbContext>();
-        
+
         services.AddHostedService<DatabaseConfigurationService>();
-          return services;
+        return services;
     }
 }

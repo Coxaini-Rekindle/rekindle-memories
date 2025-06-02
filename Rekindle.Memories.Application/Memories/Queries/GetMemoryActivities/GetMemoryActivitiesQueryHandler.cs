@@ -46,9 +46,7 @@ public class GetMemoryActivitiesQueryHandler : IRequestHandler<GetMemoryActiviti
         if (!isUserMember)
         {
             throw new UserNotGroupMemberException();
-        }
-
-        // Get posts and comments with extra items to check for more
+        }        // Get posts and comments with extra items to check for more
         var postsTask = _postRepository.FindByMemoryIdWithPagination(
             request.MemoryId, 
             request.PageSize + 1, 
@@ -65,6 +63,40 @@ public class GetMemoryActivitiesQueryHandler : IRequestHandler<GetMemoryActiviti
 
         var posts = (await postsTask).ToList();
         var comments = (await commentsTask).ToList();
+
+        // Collect all post and comment IDs that are being replied to
+        var replyToPostIds = comments
+            .Where(c => c.ReplyToPostId.HasValue)
+            .Select(c => c.ReplyToPostId!.Value)
+            .Distinct()
+            .ToList();
+
+        var replyToCommentIds = comments
+            .Where(c => c.ReplyToCommentId.HasValue)
+            .Select(c => c.ReplyToCommentId!.Value)
+            .Distinct()
+            .ToList();
+
+        // Fetch the content of posts and comments being replied to
+        var replyToPostsTask = replyToPostIds.Any() 
+            ? Task.WhenAll(replyToPostIds.Select(id => _postRepository.FindByIdAsync(id)))
+            : Task.FromResult(Array.Empty<Post?>());
+
+        var replyToCommentsTask = replyToCommentIds.Any()
+            ? Task.WhenAll(replyToCommentIds.Select(id => _commentRepository.FindByIdAsync(id)))
+            : Task.FromResult(Array.Empty<Comment?>());
+
+        await Task.WhenAll(replyToPostsTask, replyToCommentsTask);
+
+        var replyToPosts = (await replyToPostsTask)
+            .Where(p => p != null)
+            .Cast<Post>()
+            .ToDictionary(p => p.Id, p => p.Content);
+
+        var replyToCommentsDict = (await replyToCommentsTask)
+            .Where(c => c != null)
+            .Cast<Comment>()
+            .ToDictionary(c => c.Id, c => c.Content);
 
         // Convert to activity DTOs and combine
         var postActivities = posts.Select(post => new MemoryActivityDto
@@ -86,7 +118,8 @@ public class GetMemoryActivitiesQueryHandler : IRequestHandler<GetMemoryActiviti
                 Type = (ReactionTypeDto)r.Type,
                 CreatedAt = r.CreatedAt
             }).ToList(),
-            ReactionSummary = CreateReactionSummary(post.Reactions, request.UserId)
+            ReactionSummary = CreateReactionSummary(post.Reactions, request.UserId),
+            ReplyToContent = null // Posts don't reply to anything
         });
 
         var commentActivities = comments.Select(comment => new MemoryActivityDto
@@ -105,7 +138,12 @@ public class GetMemoryActivitiesQueryHandler : IRequestHandler<GetMemoryActiviti
                 Type = (ReactionTypeDto)r.Type,
                 CreatedAt = r.CreatedAt
             }).ToList(),
-            ReactionSummary = CreateReactionSummary(comment.Reactions, request.UserId)
+            ReactionSummary = CreateReactionSummary(comment.Reactions, request.UserId),
+            ReplyToContent = comment.ReplyToPostId.HasValue && replyToPosts.ContainsKey(comment.ReplyToPostId.Value)
+                ? replyToPosts[comment.ReplyToPostId.Value]
+                : comment.ReplyToCommentId.HasValue && replyToCommentsDict.ContainsKey(comment.ReplyToCommentId.Value)
+                    ? replyToCommentsDict[comment.ReplyToCommentId.Value]
+                    : null
         });
 
         // Combine and sort by creation date (newest first)

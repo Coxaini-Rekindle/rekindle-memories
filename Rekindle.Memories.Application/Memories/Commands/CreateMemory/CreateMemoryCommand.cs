@@ -1,10 +1,12 @@
 using MediatR;
 using Rekindle.Memories.Application.Common.Abstractions;
+using Rekindle.Memories.Application.Common.Messaging;
 using Rekindle.Memories.Application.Groups.Abstractions.Repositories;
 using Rekindle.Memories.Application.Memories.Abstractions.Repositories;
 using Rekindle.Memories.Application.Memories.Exceptions;
 using Rekindle.Memories.Application.Memories.Models;
 using Rekindle.Memories.Application.Storage.Interfaces;
+using Rekindle.Memories.Contracts;
 using Rekindle.Memories.Domain;
 
 namespace Rekindle.Memories.Application.Memories.Commands.CreateMemory;
@@ -25,17 +27,19 @@ public class CreateMemoryCommandHandler : IRequestHandler<CreateMemoryCommand, M
     private readonly IPostRepository _postRepository;
     private readonly IGroupRepository _groupRepository;
     private readonly IFileStorage _fileStorage;
+    private readonly IEventPublisher _eventPublisher;
 
     public CreateMemoryCommandHandler(
         IMemoryRepository memoryRepository,
         IPostRepository postRepository,
         IGroupRepository groupRepository,
-        IFileStorage fileStorage)
+        IFileStorage fileStorage, IEventPublisher eventPublisher)
     {
         _memoryRepository = memoryRepository;
         _postRepository = postRepository;
         _groupRepository = groupRepository;
         _fileStorage = fileStorage;
+        _eventPublisher = eventPublisher;
     }
 
     public async Task<MemoryDto> Handle(CreateMemoryCommand request, CancellationToken cancellationToken)
@@ -96,6 +100,14 @@ public class CreateMemoryCommandHandler : IRequestHandler<CreateMemoryCommand, M
         memory.SetMainPost(post.Id);
         await _memoryRepository.InsertMemory(memory, cancellationToken);
         await _postRepository.InsertPost(post, cancellationToken);
+
+        await _eventPublisher.PublishAsync(new PostCreatedEvent()
+        {
+            MemoryId = memory.Id,
+            PostId = post.Id,
+            Images = post.Images.Select(i => i.FileId).ToList()
+        });
+
         return memory.ToDto(post);
     }
 }

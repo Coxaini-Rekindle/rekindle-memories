@@ -108,8 +108,7 @@ public static class MappingExtensions
     /// <param name="currentUserId">Optional current user ID for calculating user-specific reaction summary</param>
     /// <returns>MemoryActivityDto</returns>
     public static MemoryActivityDto ToMemoryActivityDto(this Post post, Guid? currentUserId = null)
-    {
-        return new MemoryActivityDto
+    {        return new MemoryActivityDto
         {
             Id = post.Id,
             MemoryId = post.MemoryId,
@@ -121,7 +120,8 @@ public static class MappingExtensions
             ReactionSummary = post.Reactions.ToReactionSummaryDto(currentUserId),
             Images = post.Images.Select(img => img.ToDto()).ToList(),
             ReplyToPostId = null,
-            ReplyToCommentId = null
+            ReplyToCommentId = null,
+            ReplyToContent = null // Posts don't reply to anything
         };
     }
 
@@ -132,8 +132,7 @@ public static class MappingExtensions
     /// <param name="currentUserId">Optional current user ID for calculating user-specific reaction summary</param>
     /// <returns>MemoryActivityDto</returns>
     public static MemoryActivityDto ToMemoryActivityDto(this Comment comment, Guid? currentUserId = null)
-    {
-        return new MemoryActivityDto
+    {        return new MemoryActivityDto
         {
             Id = comment.Id,
             MemoryId = comment.MemoryId,
@@ -145,7 +144,8 @@ public static class MappingExtensions
             ReactionSummary = comment.Reactions.ToReactionSummaryDto(currentUserId),
             Images = [],
             ReplyToPostId = comment.ReplyToPostId,
-            ReplyToCommentId = comment.ReplyToCommentId
+            ReplyToCommentId = comment.ReplyToCommentId,
+            ReplyToContent = null // Basic mapping doesn't include reply content - use specialized methods when needed
         };
     }
 

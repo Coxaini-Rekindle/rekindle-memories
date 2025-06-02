@@ -143,6 +143,9 @@ public record MemoryActivityDto
     public Guid? ReplyToPostId { get; init; }
     public Guid? ReplyToCommentId { get; init; }
     
+    // Reply content properties
+    public string? ReplyToContent { get; init; } // Content of the post or comment being replied to
+    
     // Helper properties for comments
     public bool IsReplyToPost => ReplyToPostId.HasValue;
     public bool IsReplyToComment => ReplyToCommentId.HasValue;

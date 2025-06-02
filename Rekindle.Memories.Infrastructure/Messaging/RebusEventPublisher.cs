@@ -17,7 +17,7 @@ public class RebusEventPublisher : IEventPublisher
     }
 
     /// <inheritdoc />
-    public async Task PublishAsync<TEvent>(TEvent @event) where TEvent : Event
+    public async Task PublishAsync<TEvent>(TEvent @event) where TEvent : MemoryEvent
     {
         await _bus.Publish(@event);
     }
