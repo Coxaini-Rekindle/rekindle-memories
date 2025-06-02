@@ -1,9 +1,11 @@
 using MediatR;
+using Rekindle.Memories.Application.Common.Messaging;
 using Rekindle.Memories.Application.Groups.Abstractions.Repositories;
 using Rekindle.Memories.Application.Memories.Abstractions.Repositories;
 using Rekindle.Memories.Application.Memories.Exceptions;
 using Rekindle.Memories.Application.Memories.Models;
 using Rekindle.Memories.Application.Storage.Interfaces;
+using Rekindle.Memories.Contracts;
 using Rekindle.Memories.Domain;
 
 namespace Rekindle.Memories.Application.Memories.Commands.CreatePost;
@@ -14,17 +16,19 @@ public class CreatePostCommandHandler : IRequestHandler<CreatePostCommand, PostD
     private readonly IMemoryRepository _memoryRepository;
     private readonly IGroupRepository _groupRepository;
     private readonly IFileStorage _fileStorage;
+    private readonly IEventPublisher _eventPublisher;
 
     public CreatePostCommandHandler(
         IPostRepository postRepository,
         IMemoryRepository memoryRepository,
         IGroupRepository groupRepository,
-        IFileStorage fileStorage)
+        IFileStorage fileStorage, IEventPublisher eventPublisher)
     {
         _postRepository = postRepository;
         _memoryRepository = memoryRepository;
         _groupRepository = groupRepository;
         _fileStorage = fileStorage;
+        _eventPublisher = eventPublisher;
     }
 
     public async Task<PostDto> Handle(CreatePostCommand request, CancellationToken cancellationToken)
@@ -86,6 +90,15 @@ public class CreatePostCommandHandler : IRequestHandler<CreatePostCommand, PostD
         );
 
         await _postRepository.InsertPost(post, cancellationToken);
+
+        await _eventPublisher.PublishAsync(new PostCreatedEvent()
+        {
+            MemoryId = memory.Id,
+            PostId = post.Id,
+            Images = post.Images.Select(i => i.FileId).ToList(),
+            Title = post.Content,
+            Content = request.Content,
+        });
 
         return post.ToDto(request.UserId);
     }

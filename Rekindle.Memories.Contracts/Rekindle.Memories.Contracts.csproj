@@ -8,7 +8,7 @@
         <Description>Contract classes for Rekindle Memories microservice events</Description>
         <Authors>Rekindle</Authors>
         <PackageId>Rekindle.Memories.Contracts</PackageId>
-        <Version>1.0.0</Version>
+        <Version>1.0.1</Version>
         <PackageTags>rekindle;microservices;events;contracts</PackageTags>
     </PropertyGroup>
 

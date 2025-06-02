@@ -105,7 +105,9 @@ public class CreateMemoryCommandHandler : IRequestHandler<CreateMemoryCommand, M
         {
             MemoryId = memory.Id,
             PostId = post.Id,
-            Images = post.Images.Select(i => i.FileId).ToList()
+            Images = post.Images.Select(i => i.FileId).ToList(),
+            Title = request.Title,
+            Content = request.Content,
         });
 
         return memory.ToDto(post);
