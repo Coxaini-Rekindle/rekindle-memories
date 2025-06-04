@@ -9,4 +9,6 @@ public class PostCreatedEvent : MemoryEvent
     public string Title { get; set; } = string.Empty;
     public string Content { get; set; } = string.Empty;
     public IReadOnlyCollection<Guid> Images { get; set; } = new List<Guid>();
+
+    public DateTime CreatedAt { get; set; }
 }
