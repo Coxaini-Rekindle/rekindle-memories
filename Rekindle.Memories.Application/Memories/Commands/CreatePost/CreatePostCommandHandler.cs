@@ -94,7 +94,9 @@ public class CreatePostCommandHandler : IRequestHandler<CreatePostCommand, PostD
         await _eventPublisher.PublishAsync(new PostCreatedEvent()
         {
             MemoryId = memory.Id,
+            GroupId = memory.GroupId,
             PostId = post.Id,
+            UserId = request.UserId,
             Images = post.Images.Select(i => i.FileId).ToList(),
             Title = post.Content,
             Content = request.Content,

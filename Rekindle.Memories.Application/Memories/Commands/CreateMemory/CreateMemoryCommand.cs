@@ -104,7 +104,9 @@ public class CreateMemoryCommandHandler : IRequestHandler<CreateMemoryCommand, M
         await _eventPublisher.PublishAsync(new PostCreatedEvent()
         {
             MemoryId = memory.Id,
+            GroupId = memory.GroupId,
             PostId = post.Id,
+            UserId = request.CreatorUserId,
             Images = post.Images.Select(i => i.FileId).ToList(),
             Title = request.Title,
             Content = request.Content,
