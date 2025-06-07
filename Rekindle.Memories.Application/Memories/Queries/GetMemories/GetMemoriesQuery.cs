@@ -2,6 +2,7 @@ using MediatR;
 using Rekindle.Memories.Application.Groups.Abstractions.Repositories;
 using Rekindle.Memories.Application.Memories.Abstractions.Repositories;
 using Rekindle.Memories.Application.Memories.Exceptions;
+using Rekindle.Memories.Application.Memories.Mappings;
 using Rekindle.Memories.Application.Memories.Models;
 
 namespace Rekindle.Memories.Application.Memories.Queries.GetMemories;

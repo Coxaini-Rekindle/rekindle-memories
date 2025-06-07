@@ -1,6 +1,7 @@
 using MediatR;
 using Rekindle.Memories.Application.Memories.Abstractions.Repositories;
 using Rekindle.Memories.Application.Memories.Exceptions;
+using Rekindle.Memories.Application.Memories.Mappings;
 using Rekindle.Memories.Application.Memories.Models;
 using Rekindle.Memories.Domain;
 

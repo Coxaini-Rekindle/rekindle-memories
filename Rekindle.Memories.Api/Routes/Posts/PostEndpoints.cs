@@ -12,6 +12,7 @@ using Rekindle.Memories.Application.Memories.Models;
 using Rekindle.Memories.Application.Memories.Queries.GetPostById;
 using Rekindle.Memories.Application.Memories.Queries.GetPostImage;
 using Rekindle.Memories.Application.Memories.Queries.GetMemoryActivities;
+using Rekindle.Memories.Application.Memories.Requests;
 
 namespace Rekindle.Memories.Api.Routes.Posts;
 
@@ -51,7 +52,8 @@ public static class PostEndpoints
             .Produces(400)
             .Produces(401)
             .Produces(403)
-            .Produces(404);        postsEndpoint.MapGet("/{postId:guid}", GetPostById)
+            .Produces(404);
+        postsEndpoint.MapGet("/{postId:guid}", GetPostById)
             .WithName("GetPostById")
             .WithSummary("Get a specific post")
             .WithDescription("Gets a specific post by its ID")
@@ -275,7 +277,8 @@ public static class PostEndpoints
             PostId: postId,
             Content: request.Content,
             UserId: userId
-        );        var result = await mediator.Send(command);
+        );
+        var result = await mediator.Send(command);
         return Results.Ok(result);
     }
 

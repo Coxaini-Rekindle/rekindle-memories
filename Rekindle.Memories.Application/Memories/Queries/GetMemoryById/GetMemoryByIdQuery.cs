@@ -2,6 +2,7 @@ using MediatR;
 using Rekindle.Memories.Application.Groups.Abstractions.Repositories;
 using Rekindle.Memories.Application.Memories.Abstractions.Repositories;
 using Rekindle.Memories.Application.Memories.Exceptions;
+using Rekindle.Memories.Application.Memories.Mappings;
 using Rekindle.Memories.Application.Memories.Models;
 
 namespace Rekindle.Memories.Application.Memories.Queries.GetMemoryById;
@@ -41,11 +42,14 @@ public class GetMemoryByIdQueryHandler : IRequestHandler<GetMemoryByIdQuery, Mem
         if (group == null)
         {
             throw new GroupNotFoundException();
-        }        var isUserMember = group.Members.Any(m => m.Id == request.UserId);
+        }
+
+        var isUserMember = group.Members.Any(m => m.Id == request.UserId);
         if (!isUserMember)
         {
             throw new UserNotGroupMemberException();
-        }        // Fetch the main post
+        } // Fetch the main post
+
         var mainPost = await _postRepository.FindById(memory.MainPostId, cancellationToken);
 
         return memory.ToDto(mainPost);

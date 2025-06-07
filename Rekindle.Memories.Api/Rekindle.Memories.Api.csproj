@@ -26,4 +26,8 @@
         <ProjectReference Include="..\Rekindle.Memories.Infrastructure\Rekindle.Memories.Infrastructure.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <Folder Include="Requests\"/>
+    </ItemGroup>
+
 </Project>

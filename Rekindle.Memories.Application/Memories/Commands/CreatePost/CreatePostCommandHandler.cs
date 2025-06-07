@@ -3,6 +3,7 @@ using Rekindle.Memories.Application.Common.Messaging;
 using Rekindle.Memories.Application.Groups.Abstractions.Repositories;
 using Rekindle.Memories.Application.Memories.Abstractions.Repositories;
 using Rekindle.Memories.Application.Memories.Exceptions;
+using Rekindle.Memories.Application.Memories.Mappings;
 using Rekindle.Memories.Application.Memories.Models;
 using Rekindle.Memories.Application.Storage.Interfaces;
 using Rekindle.Memories.Contracts;

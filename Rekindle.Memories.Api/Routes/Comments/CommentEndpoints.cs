@@ -8,6 +8,7 @@ using Rekindle.Memories.Application.Memories.Commands.DeleteComment;
 using Rekindle.Memories.Application.Memories.Commands.RemoveCommentReaction;
 using Rekindle.Memories.Application.Memories.Models;
 using Rekindle.Memories.Application.Memories.Queries.GetMemoryActivities;
+using Rekindle.Memories.Application.Memories.Requests;
 
 namespace Rekindle.Memories.Api.Routes.Comments;
 
@@ -19,7 +20,8 @@ public static class CommentEndpoints
             .WithTags("Comments")
             .WithDisplayName("Comments")
             .WithDescription("Endpoints for managing comments on posts")
-            .RequireAuthorization();        var memoryCommentsEndpoint = app.MapGroup("memories/{memoryId:guid}/activities")
+            .RequireAuthorization();
+        var memoryCommentsEndpoint = app.MapGroup("memories/{memoryId:guid}/activities")
             .WithTags("Memory Activities")
             .WithDisplayName("Memory Activities")
             .WithDescription("Endpoints for managing activities (posts and comments) within specific memories")
@@ -40,7 +42,8 @@ public static class CommentEndpoints
         memoryCommentsEndpoint.MapGet("/", GetMemoryActivities)
             .WithName("GetMemoryActivities")
             .WithSummary("Get activities from a memory")
-            .WithDescription("Gets all activities (posts and comments) from a specific memory with cursor-based pagination")
+            .WithDescription(
+                "Gets all activities (posts and comments) from a specific memory with cursor-based pagination")
             .Produces<CursorPaginationResponse<MemoryActivityDto>>(200)
             .Produces(400)
             .Produces(401)
@@ -91,7 +94,9 @@ public static class CommentEndpoints
             .Produces(404);
 
         return app;
-    }    private static async Task<IResult> CreateComment(
+    }
+
+    private static async Task<IResult> CreateComment(
         [FromRoute] Guid memoryId,
         [FromBody] CreateCommentRequest request,
         [FromServices] IMediator mediator,

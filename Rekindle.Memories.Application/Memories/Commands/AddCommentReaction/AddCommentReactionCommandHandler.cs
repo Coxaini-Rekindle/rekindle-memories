@@ -2,6 +2,7 @@ using MediatR;
 using Rekindle.Memories.Application.Groups.Abstractions.Repositories;
 using Rekindle.Memories.Application.Memories.Abstractions.Repositories;
 using Rekindle.Memories.Application.Memories.Exceptions;
+using Rekindle.Memories.Application.Memories.Mappings;
 using Rekindle.Memories.Application.Memories.Models;
 using Rekindle.Memories.Domain;
 
@@ -49,7 +50,8 @@ public class AddCommentReactionCommandHandler : IRequestHandler<AddCommentReacti
         if (!isUserMember)
         {
             throw new UserNotGroupMemberException();
-        }        // Add or update the reaction
+        } // Add or update the reaction
+
         var reactionType = request.ReactionType.ToDomain();
         comment.UpdateReaction(request.UserId, reactionType);
 

@@ -8,6 +8,7 @@ using Rekindle.Memories.Application.Memories.Commands.CreateMemory;
 using Rekindle.Memories.Application.Memories.Models;
 using Rekindle.Memories.Application.Memories.Queries.GetMemories;
 using Rekindle.Memories.Application.Memories.Queries.GetMemoryById;
+using Rekindle.Memories.Application.Memories.Requests;
 
 namespace Rekindle.Memories.Api.Routes.Memories;
 
@@ -30,7 +31,8 @@ public static class MemoryEndpoints
         groupsEndpoint.MapPost("/", CreateMemory)
             .WithName("CreateMemory")
             .WithSummary("Create a new memory")
-            .WithDescription("Creates a new memory in a group with an initial post and images")            .Accepts<CreateMemoryFormRequest>("multipart/form-data")
+            .WithDescription("Creates a new memory in a group with an initial post and images")
+            .Accepts<CreateMemoryFormRequest>("multipart/form-data")
             .Produces<MemoryDto>(201)
             .Produces(400)
             .Produces(401)
@@ -89,7 +91,8 @@ public static class MemoryEndpoints
                         }
                     }
                 };
-                return operation;            })
+                return operation;
+            })
             .DisableAntiforgery();
 
         groupsEndpoint.MapGet("/", GetMemories)

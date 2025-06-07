@@ -1,6 +1,7 @@
+using Rekindle.Memories.Application.Memories.Models;
 using Rekindle.Memories.Domain;
 
-namespace Rekindle.Memories.Application.Memories.Models;
+namespace Rekindle.Memories.Application.Memories.Mappings;
 
 /// <summary>
 /// Mapping extensions for converting domain entities to DTOs and handling related mappings
@@ -108,7 +109,8 @@ public static class MappingExtensions
     /// <param name="currentUserId">Optional current user ID for calculating user-specific reaction summary</param>
     /// <returns>MemoryActivityDto</returns>
     public static MemoryActivityDto ToMemoryActivityDto(this Post post, Guid? currentUserId = null)
-    {        return new MemoryActivityDto
+    {
+        return new MemoryActivityDto
         {
             Id = post.Id,
             MemoryId = post.MemoryId,
@@ -132,7 +134,8 @@ public static class MappingExtensions
     /// <param name="currentUserId">Optional current user ID for calculating user-specific reaction summary</param>
     /// <returns>MemoryActivityDto</returns>
     public static MemoryActivityDto ToMemoryActivityDto(this Comment comment, Guid? currentUserId = null)
-    {        return new MemoryActivityDto
+    {
+        return new MemoryActivityDto
         {
             Id = comment.Id,
             MemoryId = comment.MemoryId,
@@ -155,17 +158,18 @@ public static class MappingExtensions
     /// <param name="reactions">The collection of reactions</param>
     /// <param name="currentUserId">Optional current user ID for filtering user reactions</param>
     /// <returns>ReactionSummaryDto</returns>
-    public static ReactionSummaryDto ToReactionSummaryDto(this IEnumerable<Reaction> reactions, Guid? currentUserId = null)
+    public static ReactionSummaryDto ToReactionSummaryDto(this IEnumerable<Reaction> reactions,
+        Guid? currentUserId = null)
     {
         var reactionList = reactions.ToList();
-        
+
         return new ReactionSummaryDto
         {
             TotalCount = reactionList.Count,
             ReactionCounts = reactionList
                 .GroupBy(r => r.Type.ToDto())
                 .ToDictionary(g => g.Key, g => g.Count()),
-            UserReactions = currentUserId.HasValue 
+            UserReactions = currentUserId.HasValue
                 ? reactionList
                     .Where(r => r.UserId == currentUserId.Value)
                     .Select(r => r.Type.ToDto())
@@ -226,7 +230,8 @@ public static class MappingExtensions
             ReactionTypeDto.Peaceful => ReactionType.Peaceful,
             ReactionTypeDto.Adventure => ReactionType.Adventure,
             ReactionTypeDto.Warm => ReactionType.Warm,
-            _ => throw new ArgumentOutOfRangeException(nameof(reactionTypeDto), reactionTypeDto, "Unknown reaction type DTO")
+            _ => throw new ArgumentOutOfRangeException(nameof(reactionTypeDto), reactionTypeDto,
+                "Unknown reaction type DTO")
         };
     }
 }

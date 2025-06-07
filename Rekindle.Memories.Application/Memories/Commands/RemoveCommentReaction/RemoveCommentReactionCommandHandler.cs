@@ -2,6 +2,7 @@ using MediatR;
 using Rekindle.Memories.Application.Groups.Abstractions.Repositories;
 using Rekindle.Memories.Application.Memories.Abstractions.Repositories;
 using Rekindle.Memories.Application.Memories.Exceptions;
+using Rekindle.Memories.Application.Memories.Mappings;
 using Rekindle.Memories.Application.Memories.Models;
 using Rekindle.Memories.Domain;
 
@@ -23,7 +24,8 @@ public class RemoveCommentReactionCommandHandler : IRequestHandler<RemoveComment
         _groupRepository = groupRepository;
     }
 
-    public async Task<ReactionSummaryDto> Handle(RemoveCommentReactionCommand request, CancellationToken cancellationToken)
+    public async Task<ReactionSummaryDto> Handle(RemoveCommentReactionCommand request,
+        CancellationToken cancellationToken)
     {
         // Find the comment
         var comment = await _commentRepository.FindById(request.CommentId, cancellationToken);
