@@ -15,11 +15,12 @@ public class MemoryRepository : IMemoryRepository
         _memoryCollection = memoriesDbContext.Memories;
     }
 
-    public async Task InsertMemory(Memory memory, CancellationToken cancellationToken = default, ITransactionContext? transactionContext = null)
+    public async Task InsertMemory(Memory memory, CancellationToken cancellationToken = default,
+        ITransactionContext? transactionContext = null)
     {
         var options = new InsertOneOptions();
         var session = (transactionContext as MongoTransactionContext)?.Session;
-        
+
         if (session != null)
         {
             await _memoryCollection.InsertOneAsync(session, memory, options, cancellationToken);
@@ -36,7 +37,16 @@ public class MemoryRepository : IMemoryRepository
         return await _memoryCollection.Find(filter).FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Memory>> FindByGroupId(Guid groupId, int limit, DateTime? cursor = null, CancellationToken cancellationToken = default)
+    public Task<IEnumerable<Memory>> FindByIds(IEnumerable<Guid> memoryIds,
+        CancellationToken cancellationToken = default)
+    {
+        var filter = Builders<Memory>.Filter.In(m => m.Id, memoryIds);
+        return _memoryCollection.Find(filter).ToListAsync(cancellationToken)
+            .ContinueWith(task => task.Result.AsEnumerable(), cancellationToken);
+    }
+
+    public async Task<IEnumerable<Memory>> FindByGroupId(Guid groupId, int limit, DateTime? cursor = null,
+        CancellationToken cancellationToken = default)
     {
         var filterBuilder = Builders<Memory>.Filter;
         var filter = filterBuilder.Eq(m => m.GroupId, groupId);

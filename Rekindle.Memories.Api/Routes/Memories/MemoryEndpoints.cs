@@ -3,6 +3,7 @@ using System.Text.Json;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
+using Rekindle.Memories.Api.Helpers;
 using Rekindle.Memories.Api.Models;
 using Rekindle.Memories.Application.Memories.Commands.CreateMemory;
 using Rekindle.Memories.Application.Memories.Models;
@@ -122,9 +123,8 @@ public static class MemoryEndpoints
         [FromRoute] Guid groupId,
         HttpRequest httpRequest,
         [FromServices] IMediator mediator,
-        ClaimsPrincipal user)
-    {
-        var userId = GetUserIdFromClaims(user);
+        ClaimsPrincipal user)    {
+        var userId = ClaimsHelper.GetUserIdFromClaims(user);
 
         try
         {
@@ -218,9 +218,8 @@ public static class MemoryEndpoints
         [FromServices] IMediator mediator,
         ClaimsPrincipal user,
         [FromQuery] int limit = 20,
-        [FromQuery] DateTime? cursor = null)
-    {
-        var userId = GetUserIdFromClaims(user);
+        [FromQuery] DateTime? cursor = null)    {
+        var userId = ClaimsHelper.GetUserIdFromClaims(user);
 
         var query = new GetMemoriesQuery
         {
@@ -236,10 +235,9 @@ public static class MemoryEndpoints
 
     private static async Task<IResult> GetMemoryById(
         [FromRoute] Guid memoryId,
-        [FromServices] IMediator mediator,
-        ClaimsPrincipal user)
+        [FromServices] IMediator mediator,        ClaimsPrincipal user)
     {
-        var userId = GetUserIdFromClaims(user);
+        var userId = ClaimsHelper.GetUserIdFromClaims(user);
 
         var query = new GetMemoryByIdQuery
         {
@@ -248,20 +246,5 @@ public static class MemoryEndpoints
         };
 
         var result = await mediator.Send(query);
-        return Results.Ok(result);
-    }
-
-    private static Guid GetUserIdFromClaims(ClaimsPrincipal user)
-    {
-        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                          ?? user.FindFirst("sub")?.Value
-                          ?? user.FindFirst("userId")?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
-        {
-            throw new UnauthorizedAccessException("Invalid user ID in token");
-        }
-
-        return userId;
-    }
+        return Results.Ok(result);    }
 }

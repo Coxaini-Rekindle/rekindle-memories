@@ -10,11 +10,13 @@ using Rekindle.Authentication;
 using Rekindle.Memories.Application.Common.Abstractions;
 using Rekindle.Memories.Application.Groups.Abstractions.Repositories;
 using Rekindle.Memories.Application.Memories.Abstractions.Repositories;
+using Rekindle.Memories.Application.Memories.Interfaces;
 using Rekindle.Memories.Application.Storage.Interfaces;
 using Rekindle.Memories.Infrastructure.DataAccess;
 using Rekindle.Memories.Infrastructure.Messaging;
 using Rekindle.Memories.Infrastructure.Repositories.Groups;
 using Rekindle.Memories.Infrastructure.Repositories.Memories;
+using Rekindle.Memories.Infrastructure.Search;
 using Rekindle.Memories.Infrastructure.Services;
 using Rekindle.Memories.Infrastructure.Storage;
 
@@ -31,6 +33,11 @@ public static class DependencyInjection
         services.AddJwtAuth(configuration);
         services.AddFileStorage(configuration);
 
+        services.AddHttpClient<IImageSearchClient, ImageSearchClient>(client =>
+        {
+            client.BaseAddress = new Uri(configuration["ImageSearchApi:BaseUrl"]!);
+        });
+
         return services;
     }
 
@@ -40,6 +47,7 @@ public static class DependencyInjection
         services.AddScoped<IMemoryRepository, MemoryRepository>();
         services.AddScoped<IPostRepository, PostRepository>();
         services.AddScoped<ICommentRepository, CommentRepository>();
+        services.AddScoped<IMemoryPostRepository, MemoryPostRepositoryWithAggregation>();
         services.AddScoped<ITransactionManager, MongoTransactionManager>();
 
         return services;

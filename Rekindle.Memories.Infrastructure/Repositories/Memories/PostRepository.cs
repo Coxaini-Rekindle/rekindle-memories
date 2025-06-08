@@ -16,11 +16,12 @@ public class PostRepository : IPostRepository
         _postCollection = memoriesDbContext.Posts;
     }
 
-    public async Task InsertPost(Post post, CancellationToken cancellationToken = default, ITransactionContext? transactionContext = null)
+    public async Task InsertPost(Post post, CancellationToken cancellationToken = default,
+        ITransactionContext? transactionContext = null)
     {
         var options = new InsertOneOptions();
         var session = (transactionContext as MongoTransactionContext)?.Session;
-        
+
         if (session != null)
         {
             await _postCollection.InsertOneAsync(session, post, options, cancellationToken);
@@ -46,7 +47,8 @@ public class PostRepository : IPostRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Post>> FindByMemoryIdWithPagination(Guid memoryId, int limit, DateTime? cursor = null, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Post>> FindByMemoryIdWithPagination(Guid memoryId, int limit, DateTime? cursor = null,
+        CancellationToken cancellationToken = default)
     {
         var filterBuilder = Builders<Post>.Filter;
         var filter = filterBuilder.Eq(p => p.MemoryId, memoryId);
@@ -67,10 +69,25 @@ public class PostRepository : IPostRepository
     {
         var filter = Builders<Post>.Filter.Eq(p => p.Id, post.Id);
         await _postCollection.ReplaceOneAsync(filter, post, new ReplaceOptions(), cancellationToken);
-    }    public async Task DeletePost(Guid postId, CancellationToken cancellationToken = default)
+    }
+
+    public async Task DeletePost(Guid postId, CancellationToken cancellationToken = default)
     {
         var filter = Builders<Post>.Filter.Eq(p => p.Id, postId);
         await _postCollection.DeleteOneAsync(filter, cancellationToken);
+    }
+
+    public async Task<IEnumerable<Post>> GetMainPostsByMemoryIds(IEnumerable<Guid> memoryIds,
+        CancellationToken cancellationToken = default)
+    {
+        var filter = Builders<Post>.Filter.In(p => p.MemoryId, memoryIds);
+        var mainPostFilter = Builders<Post>.Filter.Eq(p => p.IsMainPost, true);
+
+        var combinedFilter = Builders<Post>.Filter.And(filter, mainPostFilter);
+        return await _postCollection
+            .Find(combinedFilter)
+            .SortByDescending(p => p.CreatedAt)
+            .ToListAsync(cancellationToken);
     }
 
     // Additional API support methods
@@ -89,12 +106,13 @@ public class PostRepository : IPostRepository
         await DeletePost(postId);
     }
 
-    public async Task<CursorPaginationResponse<Post>> FindByMemoryIdWithPaginationAsync(Guid memoryId, int pageSize = 20, DateTime? cursor = null)
+    public async Task<CursorPaginationResponse<Post>> FindByMemoryIdWithPaginationAsync(Guid memoryId,
+        int pageSize = 20, DateTime? cursor = null)
     {
         var posts = await FindByMemoryIdWithPagination(memoryId, pageSize + 1, cursor);
         var postList = posts.ToList();
         var hasMore = postList.Count > pageSize;
-        
+
         if (hasMore)
         {
             postList = postList.Take(pageSize).ToList();

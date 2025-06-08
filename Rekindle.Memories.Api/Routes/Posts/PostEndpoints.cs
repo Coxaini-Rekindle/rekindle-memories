@@ -2,6 +2,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Rekindle.Memories.Api.Helpers;
 using Rekindle.Memories.Api.Models;
 using Rekindle.Memories.Application.Memories.Commands.CreatePost;
 using Rekindle.Memories.Application.Memories.Commands.UpdatePost;
@@ -125,7 +126,7 @@ public static class PostEndpoints
         [FromServices] IMediator mediator,
         ClaimsPrincipal user)
     {
-        var userId = GetUserIdFromClaims(user);
+        var userId = ClaimsHelper.GetUserIdFromClaims(user);
 
         try
         {
@@ -212,7 +213,7 @@ public static class PostEndpoints
         [FromQuery] int pageSize = 20,
         [FromQuery] DateTime? cursor = null)
     {
-        var userId = GetUserIdFromClaims(user);
+        var userId = ClaimsHelper.GetUserIdFromClaims(user);
 
         var query = new GetMemoryActivitiesQuery(
             MemoryId: memoryId,
@@ -254,7 +255,7 @@ public static class PostEndpoints
         [FromServices] IMediator mediator,
         ClaimsPrincipal user)
     {
-        var userId = GetUserIdFromClaims(user);
+        var userId = ClaimsHelper.GetUserIdFromClaims(user);
 
         var query = new GetPostByIdQuery(
             PostId: postId,
@@ -271,7 +272,7 @@ public static class PostEndpoints
         [FromServices] IMediator mediator,
         ClaimsPrincipal user)
     {
-        var userId = GetUserIdFromClaims(user);
+        var userId = ClaimsHelper.GetUserIdFromClaims(user);
 
         var command = new UpdatePostCommand(
             PostId: postId,
@@ -288,7 +289,7 @@ public static class PostEndpoints
         [FromServices] IMediator mediator,
         ClaimsPrincipal user)
     {
-        var userId = GetUserIdFromClaims(user);
+        var userId = ClaimsHelper.GetUserIdFromClaims(user);
 
         var query = new GetPostImageQuery(
             PostId: postId,
@@ -305,7 +306,7 @@ public static class PostEndpoints
         [FromServices] IMediator mediator,
         ClaimsPrincipal user)
     {
-        var userId = GetUserIdFromClaims(user);
+        var userId = ClaimsHelper.GetUserIdFromClaims(user);
 
         var command = new DeletePostCommand(
             PostId: postId,
@@ -322,7 +323,7 @@ public static class PostEndpoints
         [FromServices] IMediator mediator,
         ClaimsPrincipal user)
     {
-        var userId = GetUserIdFromClaims(user);
+        var userId = ClaimsHelper.GetUserIdFromClaims(user);
 
         var command = new AddPostReactionCommand
         {
@@ -340,29 +341,13 @@ public static class PostEndpoints
         [FromServices] IMediator mediator,
         ClaimsPrincipal user)
     {
-        var userId = GetUserIdFromClaims(user);
+        var userId = ClaimsHelper.GetUserIdFromClaims(user);
 
         var command = new RemovePostReactionCommand
         {
             PostId = postId,
             UserId = userId
-        };
-
-        var result = await mediator.Send(command);
+        };        var result = await mediator.Send(command);
         return Results.Ok(result);
-    }
-
-    private static Guid GetUserIdFromClaims(ClaimsPrincipal user)
-    {
-        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                          ?? user.FindFirst("sub")?.Value
-                          ?? user.FindFirst("userId")?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
-        {
-            throw new UnauthorizedAccessException("Invalid user ID in token");
-        }
-
-        return userId;
     }
 }

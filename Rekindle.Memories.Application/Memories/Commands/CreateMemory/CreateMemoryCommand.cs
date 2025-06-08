@@ -97,7 +97,8 @@ public class CreateMemoryCommandHandler : IRequestHandler<CreateMemoryCommand, M
             memoryId: memory.Id,
             content: request.Content,
             images: images,
-            creatorUserId: request.CreatorUserId
+            creatorUserId: request.CreatorUserId,
+            isMainPost: true
         );
         memory.SetMainPost(post.Id);
         await _memoryRepository.InsertMemory(memory, cancellationToken);

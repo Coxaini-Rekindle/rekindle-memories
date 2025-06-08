@@ -5,6 +5,7 @@ using Rekindle.Exceptions.Api.Extensions;
 using Rekindle.Memories.Api.Routes.Memories;
 using Rekindle.Memories.Api.Routes.Posts;
 using Rekindle.Memories.Api.Routes.Comments;
+using Rekindle.Memories.Api.Routes.Search;
 using Rekindle.Memories.Application;
 using Rekindle.Memories.Infrastructure;
 using Rekindle.Memories.Infrastructure.Messaging;
@@ -62,5 +63,6 @@ app.UseExceptionHandlingMiddleware();
 app.MapMemoryEndpoints();
 app.MapPostEndpoints();
 app.MapCommentEndpoints();
+app.MapSearchEndpoints();
 
 app.Run();

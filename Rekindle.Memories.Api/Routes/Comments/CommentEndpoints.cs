@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Rekindle.Memories.Api.Helpers;
 using Rekindle.Memories.Application.Memories.Commands.AddCommentReaction;
 using Rekindle.Memories.Application.Memories.Commands.CreateComment;
 using Rekindle.Memories.Application.Memories.Commands.UpdateComment;
@@ -102,7 +103,7 @@ public static class CommentEndpoints
         [FromServices] IMediator mediator,
         ClaimsPrincipal user)
     {
-        var userId = GetUserIdFromClaims(user);
+        var userId = ClaimsHelper.GetUserIdFromClaims(user);
 
         var command = new CreateCommentCommand(
             MemoryId: memoryId,
@@ -123,7 +124,7 @@ public static class CommentEndpoints
         [FromQuery] int pageSize = 20,
         [FromQuery] DateTime? cursor = null)
     {
-        var userId = GetUserIdFromClaims(user);
+        var userId = ClaimsHelper.GetUserIdFromClaims(user);
 
         var query = new GetMemoryActivitiesQuery(
             MemoryId: memoryId,
@@ -142,7 +143,7 @@ public static class CommentEndpoints
         [FromServices] IMediator mediator,
         ClaimsPrincipal user)
     {
-        var userId = GetUserIdFromClaims(user);
+        var userId = ClaimsHelper.GetUserIdFromClaims(user);
 
         var command = new UpdateCommentCommand(
             CommentId: commentId,
@@ -159,7 +160,7 @@ public static class CommentEndpoints
         [FromServices] IMediator mediator,
         ClaimsPrincipal user)
     {
-        var userId = GetUserIdFromClaims(user);
+        var userId = ClaimsHelper.GetUserIdFromClaims(user);
 
         var command = new DeleteCommentCommand(
             CommentId: commentId,
@@ -176,7 +177,7 @@ public static class CommentEndpoints
         [FromServices] IMediator mediator,
         ClaimsPrincipal user)
     {
-        var userId = GetUserIdFromClaims(user);
+        var userId = ClaimsHelper.GetUserIdFromClaims(user);
         var command = new AddCommentReactionCommand
         {
             CommentId = commentId,
@@ -193,34 +194,13 @@ public static class CommentEndpoints
         [FromServices] IMediator mediator,
         ClaimsPrincipal user)
     {
-        var userId = GetUserIdFromClaims(user);
+        var userId = ClaimsHelper.GetUserIdFromClaims(user);
         var command =
             new RemoveCommentReactionCommand
             {
                 CommentId = commentId,
                 UserId = userId
-            };
-
-        var result = await mediator.Send(command);
+            };        var result = await mediator.Send(command);
         return Results.Ok(result);
-    }
-
-    private static Guid GetUserIdFromClaims(ClaimsPrincipal user)
-    {
-        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                          ?? user.FindFirst("sub")?.Value
-                          ?? user.FindFirst("userId")?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim))
-        {
-            throw new UnauthorizedAccessException("Invalid user ID in token");
-        }
-
-        if (!Guid.TryParse(userIdClaim, out var userId))
-        {
-            throw new UnauthorizedAccessException("Invalid user ID format in token");
-        }
-
-        return userId;
     }
 }

@@ -7,14 +7,17 @@ public class Post : IMemoryBlock
 {
     [BsonId, BsonRepresentation(BsonType.String)]
     public Guid Id { get; set; }
+
     public Guid MemoryId { get; set; }
     public string Content { get; set; } = null!;
     public List<Image> Images { get; set; } = [];
     public DateTime CreatedAt { get; set; }
     public Guid CreatorUserId { get; set; }
+    public bool IsMainPost { get; set; } = false;
     public List<Reaction> Reactions { get; set; } = [];
-    
-    public static Post Create(Guid memoryId, string content, List<Image> images, Guid creatorUserId)
+
+    public static Post Create(Guid memoryId, string content, List<Image> images, Guid creatorUserId,
+        bool isMainPost = false)
     {
         return new Post
         {
@@ -24,6 +27,7 @@ public class Post : IMemoryBlock
             Images = images ?? [],
             CreatedAt = DateTime.UtcNow,
             CreatorUserId = creatorUserId,
+            IsMainPost = isMainPost,
             Reactions = []
         };
     }
@@ -95,19 +99,19 @@ public class Reaction
 
 public enum ReactionType
 {
-    Love,           // ❤️ Classic love/heart
-    Laugh,          // 😂 Funny/laughing
-    Wow,            // 😮 Amazing/surprised
-    Nostalgic,      // 🥺 Missing those times/nostalgic
-    Grateful,       // 🙏 Thankful/grateful
-    Celebrate,      // 🎉 Party/celebration
-    Support,        // 💪 Supportive/strong
-    Memories,       // 📸 Memory lane/camera
-    Family,         // 👨‍👩‍👧‍👦 Family vibes
-    Friendship,     // 🤝 Friendship/bond
-    Journey,        // 🛤️ Life journey/path
-    Milestone,      // 🏆 Achievement/milestone
-    Peaceful,       // 🕊️ Peaceful/serene
-    Adventure,      // 🌟 Adventure/exciting
-    Warm           // ☀️ Warm feelings/sunshine
+    Love, // ❤️ Classic love/heart
+    Laugh, // 😂 Funny/laughing
+    Wow, // 😮 Amazing/surprised
+    Nostalgic, // 🥺 Missing those times/nostalgic
+    Grateful, // 🙏 Thankful/grateful
+    Celebrate, // 🎉 Party/celebration
+    Support, // 💪 Supportive/strong
+    Memories, // 📸 Memory lane/camera
+    Family, // 👨‍👩‍👧‍👦 Family vibes
+    Friendship, // 🤝 Friendship/bond
+    Journey, // 🛤️ Life journey/path
+    Milestone, // 🏆 Achievement/milestone
+    Peaceful, // 🕊️ Peaceful/serene
+    Adventure, // 🌟 Adventure/exciting
+    Warm // ☀️ Warm feelings/sunshine
 }
