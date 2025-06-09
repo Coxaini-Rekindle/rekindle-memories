@@ -15,16 +15,16 @@ public class GroupUpdatedEventHandler : IHandleMessages<GroupUpdatedEvent>
 
     public async Task Handle(GroupUpdatedEvent message)
     {
-        var group = await _groupRepository.FindById(message.GroupId);
-        
+        var group = await _groupRepository.FindByIdAsync(message.GroupId);
+
         if (group == null)
         {
             // Handle the case where the group does not exist
             return;
         }
-        
+
         group.UpdateDetails(message.Name, message.Description);
 
-        await _groupRepository.ReplaceGroup(group);
+        await _groupRepository.ReplaceAsync(group);
     }
 }

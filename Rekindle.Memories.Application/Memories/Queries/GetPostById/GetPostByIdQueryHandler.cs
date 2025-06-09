@@ -25,7 +25,7 @@ public class GetPostByIdQueryHandler : IRequestHandler<GetPostByIdQuery, PostDto
 
     public async Task<PostDto> Handle(GetPostByIdQuery request, CancellationToken cancellationToken)
     {
-        var post = await _postRepository.FindById(request.PostId, cancellationToken);
+        var post = await _postRepository.FindByIdAsync(request.PostId, cancellationToken);
         if (post == null)
         {
             throw new PostNotFoundException();
@@ -38,7 +38,7 @@ public class GetPostByIdQueryHandler : IRequestHandler<GetPostByIdQuery, PostDto
             throw new MemoryNotFoundException();
         }
 
-        var group = await _groupRepository.FindById(memory.GroupId, cancellationToken);
+        var group = await _groupRepository.FindByIdAsync(memory.GroupId, cancellationToken);
         if (group == null)
         {
             throw new GroupNotFoundException();
@@ -58,7 +58,7 @@ public class GetPostByIdQueryHandler : IRequestHandler<GetPostByIdQuery, PostDto
             Images = post.Images.Select(img => new ImageDto
             {
                 FileId = img.FileId,
-                ParticipantIds = img.ParticipantIds
+                ParticipantIds = img.RecognizedUserIds
             }).ToList(),
             CreatedAt = post.CreatedAt,
             CreatorUserId = post.CreatorUserId,

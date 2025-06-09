@@ -4,6 +4,7 @@ using Rebus.Config;
 using Rebus.Routing.TypeBased;
 using Rekindle.Memories.Application;
 using Rekindle.Memories.Application.Common.Messaging;
+using Rekindle.Search.Contracts;
 using Rekindle.UserGroups.Contracts.GroupEvents;
 using Rekindle.UserGroups.Contracts.UserEvents;
 using IEvent = Rekindle.UserGroups.Contracts.IEvent;
@@ -40,6 +41,7 @@ public static class RebusConfig
                 await bus.Subscribe<UserLeftGroupEvent>();
                 await bus.Subscribe<UserNameChangedEvent>();
                 await bus.Subscribe<UserAvatarChangedEvent>();
+                await bus.Subscribe<ImageFacesAnalyzedEvent>();
             }
         );
         services.AutoRegisterHandlersFromAssemblyOf<IApplicationAssemblyMarker>();

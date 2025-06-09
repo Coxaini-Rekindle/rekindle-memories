@@ -41,7 +41,7 @@ public class RemoveCommentReactionCommandHandler : IRequestHandler<RemoveComment
             throw new MemoryNotFoundException();
         }
 
-        var group = await _groupRepository.FindById(memory.GroupId, cancellationToken);
+        var group = await _groupRepository.FindByIdAsync(memory.GroupId, cancellationToken);
         if (group == null)
         {
             throw new GroupNotFoundException();

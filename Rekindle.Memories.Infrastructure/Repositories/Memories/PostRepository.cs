@@ -32,7 +32,7 @@ public class PostRepository : IPostRepository
         }
     }
 
-    public async Task<Post?> FindById(Guid postId, CancellationToken cancellationToken = default)
+    public async Task<Post?> FindByIdAsync(Guid postId, CancellationToken cancellationToken = default)
     {
         var filter = Builders<Post>.Filter.Eq(p => p.Id, postId);
         return await _postCollection.Find(filter).FirstOrDefaultAsync(cancellationToken);
@@ -90,13 +90,8 @@ public class PostRepository : IPostRepository
             .ToListAsync(cancellationToken);
     }
 
-    // Additional API support methods
-    public async Task<Post?> FindByIdAsync(Guid postId)
-    {
-        return await FindById(postId);
-    }
 
-    public async Task UpdateAsync(Post post)
+    public async Task ReplaceAsync(Post post)
     {
         await UpdatePost(post);
     }

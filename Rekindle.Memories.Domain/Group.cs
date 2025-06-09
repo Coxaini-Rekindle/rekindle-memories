@@ -8,11 +8,13 @@ public class Group
     [BsonId]
     [BsonRepresentation(BsonType.String)]
     public Guid Id { get; set; }
+
     public string Name { get; set; } = null!;
     public string Description { get; set; } = null!;
     public List<User> Members { get; set; } = new();
-    
-    public static Group Create(Guid id,string name, string description, User creator)
+    public List<TempUser> TempUsers { get; set; } = new();
+
+    public static Group Create(Guid id, string name, string description, User creator)
     {
         return new Group
         {
@@ -70,7 +72,8 @@ public class User
     public string Name { get; set; } = null!;
     public string Username { get; set; } = null!;
     public Guid? AvatarFileId { get; set; }
-    
+    public Guid? LastFaceFileId { get; set; }
+
     public static User Create(Guid id, string name, string username, Guid? avatarFileId = null)
     {
         return new User
@@ -83,9 +86,8 @@ public class User
     }
 }
 
-public class ImageParticipant
+public class TempUser
 {
-    public Guid UserId { get; set; }
-    public string Name { get; set; } = null!;
-    public Guid? AvatarFileId { get; set; }
+    public Guid Id { get; set; }
+    public Guid? LastFaceFileId { get; set; }
 }

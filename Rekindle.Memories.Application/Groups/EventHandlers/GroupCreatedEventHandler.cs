@@ -20,6 +20,6 @@ public class GroupCreatedEventHandler : IHandleMessages<GroupCreatedEvent>
         var creator = User.Create(groupCreator.Id, groupCreator.Name, groupCreator.UserName, groupCreator.AvatarFileId);
         var group = Group.Create(message.GroupId, message.Name, message.Description, creator);
 
-        return _groupRepository.InsertGroup(group);
+        return _groupRepository.InsertAsync(group);
     }
 }

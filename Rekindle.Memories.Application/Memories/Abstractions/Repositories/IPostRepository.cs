@@ -9,7 +9,7 @@ public interface IPostRepository
     Task InsertPost(Post post, CancellationToken cancellationToken = default,
         ITransactionContext? transactionContext = null);
 
-    Task<Post?> FindById(Guid postId, CancellationToken cancellationToken = default);
+    Task<Post?> FindByIdAsync(Guid postId, CancellationToken cancellationToken = default);
     Task<IEnumerable<Post>> FindByMemoryId(Guid memoryId, CancellationToken cancellationToken = default);
 
     Task<IEnumerable<Post>> FindByMemoryIdWithPagination(Guid memoryId, int limit, DateTime? cursor = null,
@@ -21,9 +21,7 @@ public interface IPostRepository
     Task<IEnumerable<Post>> GetMainPostsByMemoryIds(IEnumerable<Guid> memoryIds,
         CancellationToken cancellationToken = default);
 
-    // Additional methods for API support
-    Task<Post?> FindByIdAsync(Guid postId);
-    Task UpdateAsync(Post post);
+    Task ReplaceAsync(Post post);
     Task DeleteAsync(Guid postId);
 
     // Pagination method with cursor support

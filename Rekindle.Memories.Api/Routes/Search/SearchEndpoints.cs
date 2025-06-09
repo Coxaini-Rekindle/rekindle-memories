@@ -27,13 +27,17 @@ public static class SearchEndpoints
             .Produces(404);
 
         return app;
-    }    private static async Task<IResult> SearchMemories(
+    }
+
+    private static async Task<IResult> SearchMemories(
         [FromRoute] Guid groupId,
         [FromServices] IMediator mediator,
         ClaimsPrincipal user,
+        [FromQuery] Guid[]? participants,
         [FromQuery] string? searchTerm = null,
         [FromQuery] int limit = 20,
-        [FromQuery] int offset = 0)
+        [FromQuery] int offset = 0
+    )
     {
         var userId = ClaimsHelper.GetUserIdFromClaims(user);
 
@@ -42,9 +46,11 @@ public static class SearchEndpoints
             userId,
             searchTerm,
             (ulong)Math.Min(limit, 100), // Limit max results
-            (ulong)Math.Max(offset, 0)   // Ensure non-negative offset
+            (ulong)Math.Max(offset, 0), // Ensure non-negative offset
+            participants ?? []
         );
 
         var result = await mediator.Send(query);
         return Results.Ok(result);
-    }}
+    }
+}

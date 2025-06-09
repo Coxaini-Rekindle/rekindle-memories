@@ -15,8 +15,8 @@ public class UserNameChangedEventHandler : IHandleMessages<UserNameChangedEvent>
 
     public async Task Handle(UserNameChangedEvent message)
     {
-        var groups = await _groupRepository.FindByUserId(message.UserId);
-        
+        var groups = await _groupRepository.FindByUserIdAsync(message.UserId);
+
         if (!groups.Any())
         {
             return;
@@ -27,6 +27,6 @@ public class UserNameChangedEventHandler : IHandleMessages<UserNameChangedEvent>
             group.UpdateUserName(message.UserId, message.NewName);
         }
 
-        await _groupRepository.ReplaceGroups(groups);
+        await _groupRepository.ReplaceManyAsync(groups);
     }
 }

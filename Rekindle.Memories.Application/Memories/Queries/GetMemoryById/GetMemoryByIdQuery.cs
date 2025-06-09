@@ -38,7 +38,7 @@ public class GetMemoryByIdQueryHandler : IRequestHandler<GetMemoryByIdQuery, Mem
         }
 
         // Check if user is a member of the group
-        var group = await _groupRepository.FindById(memory.GroupId, cancellationToken);
+        var group = await _groupRepository.FindByIdAsync(memory.GroupId, cancellationToken);
         if (group == null)
         {
             throw new GroupNotFoundException();
@@ -50,7 +50,7 @@ public class GetMemoryByIdQueryHandler : IRequestHandler<GetMemoryByIdQuery, Mem
             throw new UserNotGroupMemberException();
         } // Fetch the main post
 
-        var mainPost = await _postRepository.FindById(memory.MainPostId, cancellationToken);
+        var mainPost = await _postRepository.FindByIdAsync(memory.MainPostId, cancellationToken);
 
         return memory.ToDto(mainPost);
     }

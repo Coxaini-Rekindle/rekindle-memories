@@ -27,7 +27,7 @@ public class AddPostReactionCommandHandler : IRequestHandler<AddPostReactionComm
     public async Task<ReactionSummaryDto> Handle(AddPostReactionCommand request, CancellationToken cancellationToken)
     {
         // Find the post
-        var post = await _postRepository.FindById(request.PostId, cancellationToken);
+        var post = await _postRepository.FindByIdAsync(request.PostId, cancellationToken);
         if (post == null)
         {
             throw new PostNotFoundException();
@@ -40,7 +40,7 @@ public class AddPostReactionCommandHandler : IRequestHandler<AddPostReactionComm
             throw new MemoryNotFoundException();
         }
 
-        var group = await _groupRepository.FindById(memory.GroupId, cancellationToken);
+        var group = await _groupRepository.FindByIdAsync(memory.GroupId, cancellationToken);
         if (group == null)
         {
             throw new GroupNotFoundException();

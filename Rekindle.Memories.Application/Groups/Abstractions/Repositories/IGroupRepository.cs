@@ -4,10 +4,10 @@ namespace Rekindle.Memories.Application.Groups.Abstractions.Repositories;
 
 public interface IGroupRepository
 {
-    Task InsertGroup(Group group, CancellationToken ctx = default);
-    Task<Group?> FindById(Guid groupId, CancellationToken ctx = default);
-    Task<IEnumerable<Group>> FindByUserId(Guid userId, CancellationToken ctx = default);
-    Task ReplaceGroup(Group group, CancellationToken ctx = default);
-    Task ReplaceGroups(IEnumerable<Group> groups, CancellationToken ctx = default);
-    Task ReplaceUserInGroup(Guid groupId, User user, CancellationToken ctx = default);
+    Task InsertAsync(Group group, CancellationToken ctx = default);
+    Task<Group?> FindByIdAsync(Guid groupId, CancellationToken ctx = default);
+    Task<IEnumerable<Group>> FindByUserIdAsync(Guid userId, CancellationToken ctx = default);
+    Task ReplaceAsync(Group group, CancellationToken ctx = default);
+    Task ReplaceManyAsync(IEnumerable<Group> groups, CancellationToken ctx = default);
+    Task ReplaceUserInGroupAsync(Guid groupId, User user, CancellationToken ctx = default);
 }

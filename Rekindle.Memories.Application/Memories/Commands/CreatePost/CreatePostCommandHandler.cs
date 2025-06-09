@@ -42,7 +42,7 @@ public class CreatePostCommandHandler : IRequestHandler<CreatePostCommand, PostD
         }
 
         // Verify user is a member of the group
-        var group = await _groupRepository.FindById(memory.GroupId, cancellationToken);
+        var group = await _groupRepository.FindByIdAsync(memory.GroupId, cancellationToken);
         if (group == null)
         {
             throw new GroupNotFoundException();
@@ -78,7 +78,7 @@ public class CreatePostCommandHandler : IRequestHandler<CreatePostCommand, PostD
             images.Add(new Image
             {
                 FileId = fileId,
-                ParticipantIds = imageRequest.ParticipantIds ?? []
+                RecognizedUserIds = imageRequest.ParticipantIds ?? []
             });
         }
 
@@ -101,6 +101,7 @@ public class CreatePostCommandHandler : IRequestHandler<CreatePostCommand, PostD
             Images = post.Images.Select(i => i.FileId).ToList(),
             Title = post.Content,
             Content = request.Content,
+            GroupUsers = group.Members.Select(m => m.Id).ToList(),
         });
 
         return post.ToDto(request.UserId);

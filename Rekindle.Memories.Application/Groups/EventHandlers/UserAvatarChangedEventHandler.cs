@@ -15,8 +15,8 @@ public class UserAvatarChangedEventHandler : IHandleMessages<UserAvatarChangedEv
 
     public async Task Handle(UserAvatarChangedEvent message)
     {
-        var groups = await _groupRepository.FindByUserId(message.UserId);
-        
+        var groups = await _groupRepository.FindByUserIdAsync(message.UserId);
+
         if (!groups.Any())
         {
             return;
@@ -27,6 +27,6 @@ public class UserAvatarChangedEventHandler : IHandleMessages<UserAvatarChangedEv
             group.UpdateUserAvatar(message.UserId, message.AvatarFileId);
         }
 
-        await _groupRepository.ReplaceGroups(groups);
+        await _groupRepository.ReplaceManyAsync(groups);
     }
 }

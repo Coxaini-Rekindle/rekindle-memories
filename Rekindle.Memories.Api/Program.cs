@@ -5,6 +5,7 @@ using Rekindle.Exceptions.Api.Extensions;
 using Rekindle.Memories.Api.Routes.Memories;
 using Rekindle.Memories.Api.Routes.Posts;
 using Rekindle.Memories.Api.Routes.Comments;
+using Rekindle.Memories.Api.Routes.Groups;
 using Rekindle.Memories.Api.Routes.Search;
 using Rekindle.Memories.Application;
 using Rekindle.Memories.Infrastructure;
@@ -29,7 +30,7 @@ if (allowedOrigins == null || allowedOrigins.Length == 0)
 
 builder.Services.AddCors(options =>
 {
-  options.AddPolicy("Default",
+    options.AddPolicy("Default",
         corsPolicyBuilder =>
         {
             corsPolicyBuilder
@@ -64,5 +65,6 @@ app.MapMemoryEndpoints();
 app.MapPostEndpoints();
 app.MapCommentEndpoints();
 app.MapSearchEndpoints();
+app.MapGroupEndpoints();
 
 app.Run();

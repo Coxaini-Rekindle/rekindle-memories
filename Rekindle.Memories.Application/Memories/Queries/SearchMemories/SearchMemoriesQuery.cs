@@ -11,7 +11,8 @@ public record SearchMemoriesQuery(
     Guid UserId,
     string? SearchTerm,
     ulong Limit,
-    ulong Offset
+    ulong Offset,
+    IEnumerable<Guid> Participants
 ) : IRequest<IEnumerable<SearchMemoryResponse>>;
 
 public class SearchMemoriesQueryHandler : IRequestHandler<SearchMemoriesQuery, IEnumerable<SearchMemoryResponse>>
@@ -33,7 +34,7 @@ public class SearchMemoriesQueryHandler : IRequestHandler<SearchMemoriesQuery, I
     public async Task<IEnumerable<SearchMemoryResponse>> Handle(SearchMemoriesQuery request,
         CancellationToken cancellationToken)
     {
-        var group = await _groupRepository.FindById(request.GroupId, cancellationToken);
+        var group = await _groupRepository.FindByIdAsync(request.GroupId, cancellationToken);
         if (group == null)
         {
             throw new GroupNotFoundException();
@@ -45,9 +46,10 @@ public class SearchMemoriesQueryHandler : IRequestHandler<SearchMemoriesQuery, I
             throw new UserNotGroupMemberException();
         }
 
-        var searchResults = await _imageSearchClient.SearchImages(
+        var searchResults = await _imageSearchClient.SearchImagesAsync(
             request.GroupId,
             request.SearchTerm ?? string.Empty,
+            request.Participants,
             request.Limit,
             request.Offset,
             cancellationToken);

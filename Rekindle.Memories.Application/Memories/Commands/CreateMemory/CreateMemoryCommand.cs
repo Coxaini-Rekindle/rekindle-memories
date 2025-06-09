@@ -46,7 +46,7 @@ public class CreateMemoryCommandHandler : IRequestHandler<CreateMemoryCommand, M
 
     public async Task<MemoryDto> Handle(CreateMemoryCommand request, CancellationToken cancellationToken)
     {
-        var group = await _groupRepository.FindById(request.GroupId, cancellationToken);
+        var group = await _groupRepository.FindByIdAsync(request.GroupId, cancellationToken);
         if (group == null)
         {
             throw new GroupNotFoundException();
@@ -81,7 +81,7 @@ public class CreateMemoryCommandHandler : IRequestHandler<CreateMemoryCommand, M
             images.Add(new Image
             {
                 FileId = fileId,
-                ParticipantIds = []
+                RecognizedUserIds = []
             });
         }
 
@@ -113,6 +113,7 @@ public class CreateMemoryCommandHandler : IRequestHandler<CreateMemoryCommand, M
             Images = post.Images.Select(i => i.FileId).ToList(),
             Title = request.Title,
             Content = request.Content,
+            GroupUsers = group.Members.Select(m => m.Id).ToList(),
         });
 
         return memory.ToDto(post);

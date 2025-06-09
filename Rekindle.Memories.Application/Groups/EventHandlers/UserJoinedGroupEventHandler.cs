@@ -15,16 +15,16 @@ public class UserJoinedGroupEventHandler : IHandleMessages<UserJoinedGroupEvent>
 
     public async Task Handle(UserJoinedGroupEvent message)
     {
-        var group = await _groupRepository.FindById(message.GroupId);
-        
+        var group = await _groupRepository.FindByIdAsync(message.GroupId);
+
         if (group == null)
         {
             // Handle the case where the group does not exist, e.g., log an error or throw an exception
             return;
         }
-        
+
         group.AddMember(message.UserId, message.Name, message.UserName, message.AvatarFileId);
 
-        await _groupRepository.ReplaceGroup(group);
+        await _groupRepository.ReplaceAsync(group);
     }
 }

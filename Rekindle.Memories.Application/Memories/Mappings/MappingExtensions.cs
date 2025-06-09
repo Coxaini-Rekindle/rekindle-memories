@@ -83,7 +83,7 @@ public static class MappingExtensions
         return new ImageDto
         {
             FileId = image.FileId,
-            ParticipantIds = image.ParticipantIds
+            ParticipantIds = image.RecognizedUserIds
         };
     }
 

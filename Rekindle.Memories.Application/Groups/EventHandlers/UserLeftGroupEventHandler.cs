@@ -15,16 +15,16 @@ public class UserLeftGroupEventHandler : IHandleMessages<UserLeftGroupEvent>
 
     public async Task Handle(UserLeftGroupEvent message)
     {
-        var group = await _groupRepository.FindById(message.GroupId);
-        
+        var group = await _groupRepository.FindByIdAsync(message.GroupId);
+
         if (group == null)
         {
             // Handle the case where the group does not exist
             return;
         }
-        
+
         group.RemoveMember(message.UserId);
 
-        await _groupRepository.ReplaceGroup(group);
+        await _groupRepository.ReplaceAsync(group);
     }
 }

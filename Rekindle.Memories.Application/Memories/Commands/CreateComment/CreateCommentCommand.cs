@@ -45,7 +45,7 @@ public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommand,
         }
 
         // Verify user is a member of the group
-        var group = await _groupRepository.FindById(memory.GroupId, cancellationToken);
+        var group = await _groupRepository.FindByIdAsync(memory.GroupId, cancellationToken);
         if (group == null)
         {
             throw new GroupNotFoundException();

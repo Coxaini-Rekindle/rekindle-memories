@@ -77,7 +77,8 @@ public class Post : IMemoryBlock
 public class Image
 {
     public Guid FileId { get; set; }
-    public List<Guid> ParticipantIds { get; set; } = [];
+    public List<Guid> RecognizedUserIds { get; set; } = [];
+    public List<Guid> TempUserIds { get; set; } = [];
 }
 
 public class Reaction

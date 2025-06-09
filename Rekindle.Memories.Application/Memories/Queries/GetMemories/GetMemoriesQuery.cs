@@ -31,10 +31,11 @@ public class GetMemoriesQueryHandler : IRequestHandler<GetMemoriesQuery, CursorP
         _postRepository = postRepository;
     }
 
-    public async Task<CursorPaginationResponse<MemoryDto>> Handle(GetMemoriesQuery request, CancellationToken cancellationToken)
+    public async Task<CursorPaginationResponse<MemoryDto>> Handle(GetMemoriesQuery request,
+        CancellationToken cancellationToken)
     {
         // Validate that group exists and user is a member
-        var group = await _groupRepository.FindById(request.GroupId, cancellationToken);
+        var group = await _groupRepository.FindByIdAsync(request.GroupId, cancellationToken);
         if (group == null)
         {
             throw new GroupNotFoundException();
@@ -48,19 +49,21 @@ public class GetMemoriesQueryHandler : IRequestHandler<GetMemoriesQuery, CursorP
 
         // Get memories with one extra to check if there are more
         var memories = await _memoryRepository.FindByGroupId(
-            request.GroupId, 
-            request.Limit + 1, 
-            request.Cursor, 
+            request.GroupId,
+            request.Limit + 1,
+            request.Cursor,
             cancellationToken);
 
         var memoryList = memories.ToList();
         var hasMore = memoryList.Count > request.Limit;
-        
+
         // Remove the extra item if we have more
         if (hasMore)
         {
             memoryList = memoryList.Take(request.Limit).ToList();
-        }        DateTime? nextCursor = null;
+        }
+
+        DateTime? nextCursor = null;
         if (hasMore && memoryList.Any())
         {
             nextCursor = memoryList.Last().CreatedAt;
@@ -68,14 +71,14 @@ public class GetMemoriesQueryHandler : IRequestHandler<GetMemoriesQuery, CursorP
 
         // Fetch main posts for all memories
         var mainPostIds = memoryList.Select(m => m.MainPostId).ToList();
-        var mainPostTasks = mainPostIds.Select(postId => _postRepository.FindById(postId, cancellationToken));
+        var mainPostTasks = mainPostIds.Select(postId => _postRepository.FindByIdAsync(postId, cancellationToken));
         var mainPosts = await Task.WhenAll(mainPostTasks);
-          // Create a dictionary for quick lookup
+        // Create a dictionary for quick lookup
         var mainPostsDict = mainPosts
             .Where(p => p != null)
             .ToDictionary(p => p!.Id, p => p!);
 
-        var memoryDtos = memoryList.Select(m => 
+        var memoryDtos = memoryList.Select(m =>
             m.ToDto(mainPostsDict.TryGetValue(m.MainPostId, out var mainPost) ? mainPost : null)
         );
 

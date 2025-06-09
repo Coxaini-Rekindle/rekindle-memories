@@ -7,7 +7,9 @@ using Rekindle.Memories.Domain;
 
 namespace Rekindle.Memories.Application.Memories.Queries.GetMemoryActivities;
 
-public class GetMemoryActivitiesQueryHandler : IRequestHandler<GetMemoryActivitiesQuery, CursorPaginationResponse<MemoryActivityDto>>
+public class
+    GetMemoryActivitiesQueryHandler : IRequestHandler<GetMemoryActivitiesQuery,
+    CursorPaginationResponse<MemoryActivityDto>>
 {
     private readonly IPostRepository _postRepository;
     private readonly ICommentRepository _commentRepository;
@@ -26,7 +28,8 @@ public class GetMemoryActivitiesQueryHandler : IRequestHandler<GetMemoryActiviti
         _groupRepository = groupRepository;
     }
 
-    public async Task<CursorPaginationResponse<MemoryActivityDto>> Handle(GetMemoryActivitiesQuery request, CancellationToken cancellationToken)
+    public async Task<CursorPaginationResponse<MemoryActivityDto>> Handle(GetMemoryActivitiesQuery request,
+        CancellationToken cancellationToken)
     {
         // Verify memory exists
         var memory = await _memoryRepository.FindById(request.MemoryId, cancellationToken);
@@ -36,7 +39,7 @@ public class GetMemoryActivitiesQueryHandler : IRequestHandler<GetMemoryActiviti
         }
 
         // Verify user is a member of the group
-        var group = await _groupRepository.FindById(memory.GroupId, cancellationToken);
+        var group = await _groupRepository.FindByIdAsync(memory.GroupId, cancellationToken);
         if (group == null)
         {
             throw new GroupNotFoundException();
@@ -46,17 +49,18 @@ public class GetMemoryActivitiesQueryHandler : IRequestHandler<GetMemoryActiviti
         if (!isUserMember)
         {
             throw new UserNotGroupMemberException();
-        }        // Get posts and comments with extra items to check for more
+        } // Get posts and comments with extra items to check for more
+
         var postsTask = _postRepository.FindByMemoryIdWithPagination(
-            request.MemoryId, 
-            request.PageSize + 1, 
-            request.Cursor, 
+            request.MemoryId,
+            request.PageSize + 1,
+            request.Cursor,
             cancellationToken);
 
         var commentsTask = _commentRepository.FindByMemoryIdWithPagination(
-            request.MemoryId, 
-            request.PageSize + 1, 
-            request.Cursor, 
+            request.MemoryId,
+            request.PageSize + 1,
+            request.Cursor,
             cancellationToken);
 
         await Task.WhenAll(postsTask, commentsTask);
@@ -78,7 +82,7 @@ public class GetMemoryActivitiesQueryHandler : IRequestHandler<GetMemoryActiviti
             .ToList();
 
         // Fetch the content of posts and comments being replied to
-        var replyToPostsTask = replyToPostIds.Any() 
+        var replyToPostsTask = replyToPostIds.Any()
             ? Task.WhenAll(replyToPostIds.Select(id => _postRepository.FindByIdAsync(id)))
             : Task.FromResult(Array.Empty<Post?>());
 
@@ -110,7 +114,7 @@ public class GetMemoryActivitiesQueryHandler : IRequestHandler<GetMemoryActiviti
             Images = post.Images.Select(img => new ImageDto
             {
                 FileId = img.FileId,
-                ParticipantIds = img.ParticipantIds
+                ParticipantIds = img.RecognizedUserIds
             }).ToList(),
             Reactions = post.Reactions.Select(r => new ReactionDto
             {
